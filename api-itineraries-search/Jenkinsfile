@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+    tools {
+        maven 'Maven 3.8.6'
+    }
+    stages {
+
+            stage('Compile') {
+                steps {
+                    dir('api-itineraries-search') {
+                        sh 'mvn clean compile'
+                    }
+                }
+
+            } 
+            stage('Test') {
+                steps {
+                    dir('api-itineraries-search') {
+                        sh 'mvn test'
+                    }
+                }
+            }
+            stage('Quality') {
+                steps {
+                    dir('api-itineraries-search') {
+                        sh 'mvn sonar:sonar -Dsonar.projectKey=api_itineraries_search -Dsonar.host.url=http://sonar:9000 -Dsonar.login=squ_245ff33d5a47b0b120f711bbaabbe7e7e9f3cb1d'
+                    }
+                }
+            }
+            stage('Package') {
+                steps {
+                    dir('api-itineraries-search') {
+                        sh 'mvn -B -DskipTests package'
+                    }
+                }
+            }
+    }
+}
